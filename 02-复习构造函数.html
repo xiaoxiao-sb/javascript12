@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		<script type="text/javascript">
+			
+			function Person(name,age,gender){
+				this.name = name;
+				this.age = age;
+				this.gender = gender;
+//				this.eat = function(){
+//					alert('吃牛扒');
+//				}
+			}
+			Person.prototype.eat = function(){
+					//指向的是实例对象
+					console.log(this.name);
+					//alert('吃牛扒');
+			}
+			var jay = new Person('周杰伦',41,true);
+			var jolin = new Person('蔡依林',38,false);
+			jay.eat();
+			jolin.eat();
+		</script>
+	</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+
+	<body>
+		<script type="text/javascript">
+			/*
+			 * 作用域链:在函数作用域访问的变量,先从当前作用域中去寻找是否有用var定义的该变量
+			 * 如果有就使用,如果没有会去上一层函数作用域中去寻找,有没有用var定义的变量,如果
+			 * 有就使用,如果没有会去上上层寻找,以此类推,直到找到全局作用域中有没有用var定义的
+			 * 变量,如果有就是用,如果没有就报错,这个寻找的过程形成的就是作用域链.
+			 */
+//			var num = 0;
+			function fn1() {
+//				var num = 1;
+
+				function fn2() {
+//					var num = 2;
+
+					function fn3() {
+//						var num = 3;
+
+						function fn4() {
+//							var num = 4;
+							alert(num);
+						}
+						fn4();
+					}
+					fn3();
+				}
+				fn2();
+			}
+			fn1();
+		</script>
+	</body>
+
+</html>

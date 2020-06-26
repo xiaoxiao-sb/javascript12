@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style type="text/css">
+			* {
+				margin: 0;
+				padding: 0;
+				list-style: none;
+			}
+			
+			.box {
+				width: 900px;
+				height: 350px;
+				margin: 100px auto;
+				overflow: hidden;
+				position: relative;
+			}
+			
+			.box ul {
+				position: absolute;
+				left: 0;
+				top: 0;
+				width: 5400px;
+			}
+			
+			.box ul li {
+				float: left;
+			}
+			
+			.box ol {
+				position: absolute;
+				right: 10px;
+				bottom: 10px;
+			}
+			
+			.box ol li {
+				float: left;
+				width: 20px;
+				height: 20px;
+				line-height: 20px;
+				border: 1px solid #fff;
+				background: #333;
+				color: #999;
+				text-align: center;
+				margin-left: 10px;
+				cursor: pointer;
+				border-radius: 50%;
+			}
+			/*指定标签选择器*/
+			
+			.box ol li.current {
+				border-color: #f60;
+				color: #f60;
+			}
+			
+			.box .leftBtn,
+			.box .rightBtn {
+				width: 40px;
+				height: 100px;
+				background: url(img/index.png) 0 0;
+				position: absolute;
+				top: 50%;
+				margin-top: -50px;
+			}
+			
+			.box .leftBtn {
+				left: 0;
+			}
+			
+			.box .rightBtn {
+				right: 0;
+				background-position: -50px 0px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="box" id="box">
+			<ul id="ulList">
+				<li><img src="img/01.jpg" height="350" width="900" alt="" /></li>
+				<li><img src="img/02.jpg" height="350" width="900" alt="" /></li>
+				<li><img src="img/03.jpg" height="350" width="900" alt="" /></li>
+				<li><img src="img/04.jpg" height="350" width="900" alt="" /></li>
+				<li><img src="img/05.jpg" height="350" width="900" alt="" /></li>
+			</ul>
+			<ol id="olList">
+				<li class="current">1</li>
+				<li>2</li>
+				<li>3</li>
+				<li>4</li>
+				<li>5</li>
+			</ol>
+			<a href="##" class="leftBtn" id="leftBtn"></a>
+			<a href="##" class="rightBtn" id="rightBtn"></a>
+		</div>
+		<script type="text/javascript">
+			//获取右按钮
+			var rightBtn = document.getElementById('rightBtn');
+			//获取左按钮
+			var leftBtn = document.getElementById('leftBtn');
+			//获取olList
+			var olList = document.getElementById('olList');
+			//获取ulList
+			var ulList = document.getElementById('ulList');
+			//获取box
+			var box = document.getElementById('box');
+			//小圆点计数器
+			var olNum = 0;
+			//ul计数器
+			var ulNum = 0;
+			//定时器
+			var timer = 0;
+			//克隆节点  元素.cloneNode(布尔数据);参数:false只克隆节点本身,
+			//true是连同节点的后代一起克隆
+			var li = ulList.firstElementChild.cloneNode(true);
+			ulList.appendChild(li);
+			console.log(li);
+			//自动轮播
+//			timer = setInterval(function() {
+//				rightMove();
+//			}, 500);
+			timer = setInterval(rightMove, 500);
+			//鼠标移入box
+			box.onmouseover = function(){
+				clearInterval(timer);
+			}
+			//鼠标移出box
+			box.onmouseout = function(){
+				timer = setInterval(rightMove, 500);
+			}
+			
+
+			//单击右按钮
+//			rightBtn.onclick = function() {
+//				rightMove();
+//			}
+			rightBtn.onclick = rightMove;
+			function rightMove(){
+				//自增1
+				olNum++;
+				//自增
+				ulNum++;
+				if(ulNum > 5) {
+					ulNum = 1;
+					//一瞬间
+					ulList.style.left = '0px';
+				}
+				//极值判断
+				if(olNum > 4) {
+					olNum = 0;
+				}
+				qieHuan();
+			}
+			
+			function qieHuan(){
+				//切换小圆点
+				//排它
+				for(var i = 0; i < olList.children.length; i++) {
+					olList.children[i].className = '';
+				}
+				olList.children[olNum].className = 'current';
+
+				//移动ul
+				//				ulList.style.left = '-900px';
+				var move = ulNum * -900;
+				animate(ulList, move);
+				/*
+				 * 第一张       0     0*-900
+				 * 第二张     -900   1*-900
+				 * 第三张     -1800  2*-900
+				 * 第四张     -2700  3*-900
+				 * 第五张     -3600  4*-900
+				 */
+			}
+			//单击左按钮
+			leftBtn.onclick = function() {
+				olNum--;
+				if(olNum < 0) {
+					olNum = 4;
+				}
+				ulNum--;
+				if(ulNum < 0) {
+					ulNum = 4;
+					ulList.style.left = '-4500px';
+				}
+				qieHuan();
+			}
+
+			//循环绑定小圆点
+			for(var i = 0; i < olList.children.length; i++) {
+				//动态添加属性,存编号
+				olList.children[i].index = i;
+				olList.children[i].onclick = function() {
+
+					//切换排它
+					for(var i = 0; i < olList.children.length; i++) {
+						olList.children[i].className = '';
+					}
+					//自己拥有current样式
+					this.className = 'current';
+
+					//去取自身的编号
+					var move = this.index * -900;
+					//ul移动
+					animate(ulList, move);
+
+					//将自身编号同步olNum和ulNum计数器
+					olNum = this.index;
+					ulNum = this.index;
+				}
+			}
+
+			/**
+			 * 封装动画函数
+			 * @param {元素对象} obj
+			 * @param {目标值} target
+			 */
+			function animate(obj, target) {
+				//避免定时器累加
+				clearInterval(obj.timer);
+				obj.timer = setInterval(function() {
+					var step = 50;
+					var current = obj.offsetLeft;
+					step = target >= current ? step : -step;
+					//当目标值-当前值的差的绝对值大于等于步数的绝对值时,设置left值
+					if(Math.abs(target - current) >= Math.abs(step)) {
+						current += step;
+						obj.style.left = current + 'px';
+					} else {
+						//表示已经接近目标值,直接设置到目标值
+						obj.style.left = target + 'px';
+						clearInterval(obj.timer);
+					}
+				}, 10);
+			}
+		</script>
+	</body>
+
+</html>
